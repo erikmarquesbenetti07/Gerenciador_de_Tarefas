@@ -1,48 +1,109 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Minhas Tarefas</h2>
-    <a href="{% url 'task_create' %}" class="btn btn-success">Criar Nova Tarefa</a>
-</div>
+<div class="container mt-5">
+    <h2 class="mb-4">Minhas Tarefas</h2>
 
-<form method="get" class="mb-4">
-    <div class="form-row">
-        <div class="col">
-            <input type="text" name="q" class="form-control" placeholder="Pesquisar tarefas..." value="{{ request.GET.q }}">
+    <!-- Formulário de Pesquisa e Filtro -->
+    <form method="get" class="form-inline mb-4">
+        <input type="text" name="q" class="form-control mr-2" placeholder="Pesquisar..." value="{{ request.GET.q }}">
+        <select name="status" class="form-control mr-2">
+            <option value="">Todos os Status</option>
+            <option value="P" {% if request.GET.status == 'P' %}selected{% endif %}>Pendente</option>
+            <option value="E" {% if request.GET.status == 'E' %}selected{% endif %}>Em Andamento</option>
+            <option value="C" {% if request.GET.status == 'C' %}selected{% endif %}>Concluída</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+    </form>
+
+    <!-- Link para Criar Nova Tarefa -->
+    <a href="{% url 'task_create' %}" class="btn btn-success mb-4">Criar Nova Tarefa</a>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h4>Pendente</h4>
+            <ul id="pending-tasks" class="task-list list-group">
+                {% for task in tasks %}
+                    {% if task.status == 'P' %}
+                        <li class="task-item list-group-item" data-task-id="{{ task.id }}">
+                            {{ task.title }}
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
         </div>
-        <div class="col">
-            <select name="status" class="form-control">
-                <option value="">Todos os Status</option>
-                <option value="P" {% if request.GET.status == 'P' %}selected{% endif %}>Pendente</option>
-                <option value="E" {% if request.GET.status == 'E' %}selected{% endif %}>Em andamento</option>
-                <option value="C" {% if request.GET.status == 'C' %}selected{% endif %}>Concluída</option>
-            </select>
+        <div class="col-md-4">
+            <h4>Em Andamento</h4>
+            <ul id="in-progress-tasks" class="task-list list-group">
+                {% for task in tasks %}
+                    {% if task.status == 'E' %}
+                        <li class="task-item list-group-item" data-task-id="{{ task.id }}">
+                            {{ task.title }}
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
         </div>
-        <div class="col">
-            <button type="submit" class="btn btn-primary">Filtrar</button>
+        <div class="col-md-4">
+            <h4>Concluída</h4>
+            <ul id="completed-tasks" class="task-list list-group">
+                {% for task in tasks %}
+                    {% if task.status == 'C' %}
+                        <li class="task-item list-group-item" data-task-id="{{ task.id }}">
+                            {{ task.title }}
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
         </div>
     </div>
-</form>
-
-<div class="list-group">
-    {% for task in tasks %}
-    <div class="list-group-item">
-        <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">{{ task.title }}</h5>
-            <small>{{ task.get_status_display }}</small>
-        </div>
-        <p class="mb-1">{{ task.description }}</p>
-        <small>Vencimento: {{ task.due_date }}</small>
-        <div class="mt-2">
-            <a href="{% url 'task_detail' task.pk %}" class="btn btn-info btn-sm">Detalhes</a>
-            <a href="{% url 'task_update' task.pk %}" class="btn btn-primary btn-sm">Editar</a>
-            <form action="{% url 'task_delete' task.pk %}" method="post" class="d-inline">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
-            </form>
-        </div>
-    </div>
-    {% endfor %}
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var pendingTasks = document.getElementById('pending-tasks');
+        var inProgressTasks = document.getElementById('in-progress-tasks');
+        var completedTasks = document.getElementById('completed-tasks');
+
+        var sortablePending = new Sortable(pendingTasks, {
+            group: 'tasks',
+            animation: 150,
+            onEnd: function (evt) {
+                updateTaskStatus(evt.item.dataset.taskId, 'P');
+            }
+        });
+
+        var sortableInProgress = new Sortable(inProgressTasks, {
+            group: 'tasks',
+            animation: 150,
+            onEnd: function (evt) {
+                updateTaskStatus(evt.item.dataset.taskId, 'E');
+            }
+        });
+
+        var sortableCompleted = new Sortable(completedTasks, {
+            group: 'tasks',
+            animation: 150,
+            onEnd: function (evt) {
+                updateTaskStatus(evt.item.dataset.taskId, 'C');
+            }
+        });
+
+        function updateTaskStatus(taskId, status) {
+            fetch(`/tasks/${taskId}/update_status/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ status: status })
+            }).then(response => {
+                if (!response.ok) {
+                    console.error('Erro ao atualizar o status da tarefa');
+                }
+            });
+        }
+    });
+</script>
 {% endblock %}

@@ -4,6 +4,9 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Task, Comment
 from .forms import TaskForm, CommentForm
 from django.db.models import Q, Count
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 @login_required
 def task_list(request):
@@ -99,3 +102,18 @@ def task_report(request):
     }
 
     return render(request, 'tasks/task_report.html', context)
+
+@login_required
+@csrf_exempt
+def update_task_status(request, pk):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            status = data.get('status')
+            task = get_object_or_404(Task, pk=pk, user=request.user)
+            task.status = status
+            task.save()
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Método não permitido'}, status=405)
