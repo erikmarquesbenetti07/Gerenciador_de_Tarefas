@@ -10,4 +10,5 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('<int:pk>/update_status/', views.update_task_status, name='update_task_status'),  # Adicionar URL para atualizar o status
     path('report/', views.task_report, name='task_report'),  # Adicionar URL para o relatório
+    path('category/create/', views.category_create, name='category_create'),  # Adicionar URL para criar categoria
 ]

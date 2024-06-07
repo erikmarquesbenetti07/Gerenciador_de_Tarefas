@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from .models import Task, Comment
-from .forms import TaskForm, CommentForm
+from .models import Task, Comment, Category
+from .forms import TaskForm, CommentForm, CategoryForm
 from django.db.models import Q, Count
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -117,3 +117,16 @@ def update_task_status(request, pk):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     return JsonResponse({'status': 'error', 'message': 'Método não permitido'}, status=405)
+
+@login_required
+def category_create(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            category = form.save(commit=False)
+            category.user = request.user
+            category.save()
+            return redirect('task_list')
+    else:
+        form = CategoryForm()
+    return render(request, 'tasks/category_form.html', {'form': form})

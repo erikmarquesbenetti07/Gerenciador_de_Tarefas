@@ -18,39 +18,82 @@
 
     <!-- Link para Criar Nova Tarefa -->
     <a href="{% url 'task_create' %}" class="btn btn-success mb-4">Criar Nova Tarefa</a>
+    <a href="{% url 'category_create' %}" class="btn btn-secondary mb-4">Criar Categoria</a>
 
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <h4>Todos os Status</h4>
+            <ul id="all-tasks" class="task-list list-group">
+                {% for task in tasks %}
+                    <li class="task-item list-group-item" data-task-id="{{ task.id }}">
+                        {{ task.title }} - {{ task.get_status_display }}
+                        <div class="btn-group float-right" role="group">
+                            <a href="{% url 'task_detail' task.pk %}" class="btn btn-info btn-sm">Detalhes</a>
+                            <a href="{% url 'task_update' task.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                            <form action="{% url 'task_delete' task.pk %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-3">
             <h4>Pendente</h4>
             <ul id="pending-tasks" class="task-list list-group">
                 {% for task in tasks %}
                     {% if task.status == 'P' %}
                         <li class="task-item list-group-item" data-task-id="{{ task.id }}">
                             {{ task.title }}
+                            <div class="btn-group float-right" role="group">
+                                <a href="{% url 'task_detail' task.pk %}" class="btn btn-info btn-sm">Detalhes</a>
+                                <a href="{% url 'task_update' task.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                                <form action="{% url 'task_delete' task.pk %}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                                </form>
+                            </div>
                         </li>
                     {% endif %}
                 {% endfor %}
             </ul>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <h4>Em Andamento</h4>
             <ul id="in-progress-tasks" class="task-list list-group">
                 {% for task in tasks %}
                     {% if task.status == 'E' %}
                         <li class="task-item list-group-item" data-task-id="{{ task.id }}">
                             {{ task.title }}
+                            <div class="btn-group float-right" role="group">
+                                <a href="{% url 'task_detail' task.pk %}" class="btn btn-info btn-sm">Detalhes</a>
+                                <a href="{% url 'task_update' task.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                                <form action="{% url 'task_delete' task.pk %}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                                </form>
+                            </div>
                         </li>
                     {% endif %}
                 {% endfor %}
             </ul>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <h4>Concluída</h4>
             <ul id="completed-tasks" class="task-list list-group">
                 {% for task in tasks %}
                     {% if task.status == 'C' %}
                         <li class="task-item list-group-item" data-task-id="{{ task.id }}">
                             {{ task.title }}
+                            <div class="btn-group float-right" role="group">
+                                <a href="{% url 'task_detail' task.pk %}" class="btn btn-info btn-sm">Detalhes</a>
+                                <a href="{% url 'task_update' task.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                                <form action="{% url 'task_delete' task.pk %}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                                </form>
+                            </div>
                         </li>
                     {% endif %}
                 {% endfor %}
@@ -65,6 +108,7 @@
         var pendingTasks = document.getElementById('pending-tasks');
         var inProgressTasks = document.getElementById('in-progress-tasks');
         var completedTasks = document.getElementById('completed-tasks');
+        var allTasks = document.getElementById('all-tasks');
 
         var sortablePending = new Sortable(pendingTasks, {
             group: 'tasks',
@@ -87,6 +131,21 @@
             animation: 150,
             onEnd: function (evt) {
                 updateTaskStatus(evt.item.dataset.taskId, 'C');
+            }
+        });
+
+        var sortableAll = new Sortable(allTasks, {
+            group: 'tasks',
+            animation: 150,
+            onEnd: function (evt) {
+                // Atualiza o status com base na coluna onde a tarefa foi movida
+                if (evt.to === pendingTasks) {
+                    updateTaskStatus(evt.item.dataset.taskId, 'P');
+                } else if (evt.to === inProgressTasks) {
+                    updateTaskStatus(evt.item.dataset.taskId, 'E');
+                } else if (evt.to === completedTasks) {
+                    updateTaskStatus(evt.item.dataset.taskId, 'C');
+                }
             }
         });
 

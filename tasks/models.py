@@ -1,6 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
 class Task(models.Model):
     STATUS_CHOICES = [
         ('P', 'Pendente'),
@@ -14,7 +21,7 @@ class Task(models.Model):
     due_date = models.DateField()
     priority = models.IntegerField()
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='P')
-    category = models.ForeignKey('Category', on_delete=models.SET_NULL, null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     parent_task = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='subtasks')
 
     def __str__(self):
@@ -28,9 +35,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.text[:20]}'
-
-class Category(models.Model):
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
