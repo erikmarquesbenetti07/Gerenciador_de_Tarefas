@@ -84,18 +84,18 @@ def task_detail(request, pk):
 def task_report(request):
     tasks = Task.objects.filter(user=request.user)
     
-    priority_high = tasks.filter(priority=3).count()
-    priority_medium = tasks.filter(priority=2).count()
-    priority_low = tasks.filter(priority=1).count()
+    priority_low = tasks.filter(priority='L').count()
+    priority_medium = tasks.filter(priority='M').count()
+    priority_high = tasks.filter(priority='H').count()
 
     status_pending = tasks.filter(status='P').count()
     status_in_progress = tasks.filter(status='E').count()
     status_completed = tasks.filter(status='C').count()
 
     context = {
-        'priority_high': priority_high,
-        'priority_medium': priority_medium,
         'priority_low': priority_low,
+        'priority_medium': priority_medium,
+        'priority_high': priority_high,
         'status_pending': status_pending,
         'status_in_progress': status_in_progress,
         'status_completed': status_completed,

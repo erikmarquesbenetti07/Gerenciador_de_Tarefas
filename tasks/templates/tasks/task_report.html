@@ -15,10 +15,10 @@
 <script>
     // Dados para o gráfico de prioridades
     const priorityData = {
-        labels: ['Alta', 'Média', 'Baixa'],
+        labels: ['Baixa', 'Média', 'Alta'],
         datasets: [{
             label: 'Prioridade',
-            data: [{{ priority_high }}, {{ priority_medium }}, {{ priority_low }}],
+            data: [{{ priority_low }}, {{ priority_medium }}, {{ priority_high }}],
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',

@@ -15,11 +15,18 @@ class Task(models.Model):
         ('C', 'Concluída'),
     ]
 
+    PRIORITY_CHOICES = [
+        ('L', 'Baixa'),
+        ('M', 'Média'),
+        ('H', 'Alta'),
+    ]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     description = models.TextField()
     due_date = models.DateField()
-    priority = models.IntegerField()
+    completion_date = models.DateField(null=True, blank=True)
+    priority = models.CharField(max_length=1, choices=PRIORITY_CHOICES, default='M')
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='P')
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     parent_task = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='subtasks')
