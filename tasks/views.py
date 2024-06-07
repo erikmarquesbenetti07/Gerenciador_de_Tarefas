@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from .models import Task, Comment
 from .forms import TaskForm, CommentForm
-from django.db.models import Q
+from django.db.models import Q, Count
 
 @login_required
 def task_list(request):
@@ -76,3 +76,26 @@ def task_detail(request, pk):
     else:
         comment_form = CommentForm()
     return render(request, 'tasks/task_detail.html', {'task': task, 'comment_form': comment_form})
+
+@login_required
+def task_report(request):
+    tasks = Task.objects.filter(user=request.user)
+    
+    priority_high = tasks.filter(priority=3).count()
+    priority_medium = tasks.filter(priority=2).count()
+    priority_low = tasks.filter(priority=1).count()
+
+    status_pending = tasks.filter(status='P').count()
+    status_in_progress = tasks.filter(status='E').count()
+    status_completed = tasks.filter(status='C').count()
+
+    context = {
+        'priority_high': priority_high,
+        'priority_medium': priority_medium,
+        'priority_low': priority_low,
+        'status_pending': status_pending,
+        'status_in_progress': status_in_progress,
+        'status_completed': status_completed,
+    }
+
+    return render(request, 'tasks/task_report.html', context)

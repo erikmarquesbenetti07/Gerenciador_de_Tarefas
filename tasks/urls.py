@@ -8,4 +8,5 @@ urlpatterns = [
     path('<int:pk>/delete/', views.task_delete, name='task_delete'),
     path('<int:pk>/', views.task_detail, name='task_detail'),
     path('signup/', views.signup, name='signup'),
+    path('report/', views.task_report, name='task_report'),  # Adicionar URL para o relatório
 ]

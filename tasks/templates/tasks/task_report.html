@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Relatório de Tarefas</h2>
+    
+    <h4>Prioridades</h4>
+    <canvas id="priorityChart" width="400" height="200"></canvas>
+    
+    <h4>Status</h4>
+    <canvas id="statusChart" width="400" height="200"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Dados para o gráfico de prioridades
+    const priorityData = {
+        labels: ['Alta', 'Média', 'Baixa'],
+        datasets: [{
+            label: 'Prioridade',
+            data: [{{ priority_high }}, {{ priority_medium }}, {{ priority_low }}],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    // Configuração do gráfico de prioridades
+    const priorityConfig = {
+        type: 'bar',
+        data: priorityData,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    };
+
+    // Inicializa o gráfico de prioridades
+    const priorityChart = new Chart(
+        document.getElementById('priorityChart'),
+        priorityConfig
+    );
+
+    // Dados para o gráfico de status
+    const statusData = {
+        labels: ['Pendente', 'Em andamento', 'Concluída'],
+        datasets: [{
+            label: 'Status',
+            data: [{{ status_pending }}, {{ status_in_progress }}, {{ status_completed }}],
+            backgroundColor: [
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 159, 64, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    // Configuração do gráfico de status
+    const statusConfig = {
+        type: 'bar',
+        data: statusData,
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    };
+
+    // Inicializa o gráfico de status
+    const statusChart = new Chart(
+        document.getElementById('statusChart'),
+        statusConfig
+    );
+</script>
+{% endblock %}
