@@ -1,19 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="text-center">Excluir Tarefa</h3>
-            </div>
-            <div class="card-body">
-                <p class="text-center">Tem certeza que deseja excluir "{{ task.title }}"?</p>
-                <form method="post" class="mt-4 text-center">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Sim, excluir</button>
-                    <a href="{% url 'task_list' %}" class="btn btn-secondary ml-2">Cancelar</a>
-                </form>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-danger text-white text-center">
+                    <h3 class="mb-0">Excluir Tarefa</h3>
+                </div>
+                <div class="card-body text-center">
+                    <p class="mb-4">Tem certeza de que deseja excluir a tarefa <strong>"{{ task.title }}"</strong>?</p>
+                    <form method="post" class="d-inline-block">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger px-4">Sim, excluir</button>
+                    </form>
+                    <a href="{% url 'task_list' %}" class="btn btn-secondary px-4">Cancelar</a>
+                </div>
             </div>
         </div>
     </div>

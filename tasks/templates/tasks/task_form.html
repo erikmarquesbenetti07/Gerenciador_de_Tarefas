@@ -1,43 +1,64 @@
 {% extends "base.html" %}
 
+{% load custom_filters %}
+
+
 {% block content %}
 <div class="container mt-5">
-    <h2 class="mb-4">{% if form.instance.pk %}Editar{% else %}Criar{% endif %} Tarefa</h2>
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="id_title">Título</label>
-            {{ form.title }}
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0 text-center">{% if form.instance.pk %}Editar{% else %}Criar{% endif %} Tarefa</h2>
         </div>
-        <div class="form-group">
-            <label for="id_description">Descrição</label>
-            {{ form.description }}
+        <div class="card-body">
+            <form method="post" class="row g-3">
+                {% csrf_token %}
+                
+                <div class="col-md-6">
+                    <label for="id_title" class="form-label">Título</label>
+                    {{ form.title|add_class:"form-control" }}
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="id_priority" class="form-label">Prioridade</label>
+                    {{ form.priority|add_class:"form-select" }}
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="id_status" class="form-label">Status</label>
+                    {{ form.status|add_class:"form-select" }}
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="id_due_date" class="form-label">Data de Vencimento</label>
+                    {{ form.due_date|add_class:"form-control" }}
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="id_completion_date" class="form-label">Data de Conclusão</label>
+                    {{ form.completion_date|add_class:"form-control" }}
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="id_category" class="form-label">Categoria</label>
+                    {{ form.category|add_class:"form-select" }}
+                </div>
+                
+                <div class="col-md-12">
+                    <label for="id_description" class="form-label">Descrição</label>
+                    {{ form.description|add_class:"form-control" }}
+                </div>
+                
+                <div class="col-md-12">
+                    <label for="id_parent_task" class="form-label">Tarefa Pai (se aplicável)</label>
+                    {{ form.parent_task|add_class:"form-select" }}
+                </div>
+                
+                <div class="col-12 text-center mt-4">
+                    <button type="submit" class="btn btn-success px-4">Salvar</button>
+                    <a href="{% url 'task_list' %}" class="btn btn-secondary px-4">Cancelar</a>
+                </div>
+            </form>
         </div>
-        <div class="form-group">
-            <label for="id_due_date">Data de Vencimento</label>
-            {{ form.due_date }}
-        </div>
-        <div class="form-group">
-            <label for="id_completion_date">Data de Conclusão</label>
-            {{ form.completion_date }}
-        </div>
-        <div class="form-group">
-            <label for="id_priority">Prioridade</label>
-            {{ form.priority }}
-        </div>
-        <div class="form-group">
-            <label for="id_status">Status</label>
-            {{ form.status }}
-        </div>
-        <div class="form-group">
-            <label for="id_category">Categoria</label>
-            {{ form.category }}
-        </div>
-        <div class="form-group">
-            <label for="id_parent_task">Tarefa Pai (se aplicável)</label>
-            {{ form.parent_task }}
-        </div>
-        <button type="submit" class="btn btn-primary">Salvar</button>
-    </form>
+    </div>
 </div>
 {% endblock %}

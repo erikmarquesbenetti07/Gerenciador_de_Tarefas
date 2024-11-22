@@ -1,12 +1,27 @@
 {% extends "base.html" %}
 
+{% load custom_filters %}
+
 {% block content %}
 <div class="container mt-5">
-    <h2 class="mb-4">Criar Categoria</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Criar</button>
-    </form>
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">Criar Categoria</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_name" class="form-label">Nome da Categoria</label>
+                            {{ form.name|add_class:"form-control" }}
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Criar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
